@@ -3,6 +3,7 @@ package me.hiramchavez.clinicaapi.Model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import me.hiramchavez.clinicaapi.dto.MedicoActualizarRecord;
 import me.hiramchavez.clinicaapi.dto.MedicoRecord;
 import me.hiramchavez.clinicaapi.medico.Especialidad;
 
@@ -32,5 +33,16 @@ public class Medico {
         this.documento = medico.documento();
         this.especialidad = medico.especialidad();
         this.direccion = new Direccion(medico.direccion());
+    }
+
+    public void actualizarDatos(MedicoActualizarRecord medicoActualizarRecord) {
+        if (medicoActualizarRecord.nombre() != null)
+            this.nombre = medicoActualizarRecord.nombre();
+
+        if (medicoActualizarRecord.documento() != null)
+            this.documento = medicoActualizarRecord.documento();
+
+        if (medicoActualizarRecord.direccion() != null)
+            this.direccion = direccion.actualizarDatos(medicoActualizarRecord.direccion());
     }
 }
