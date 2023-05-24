@@ -1,7 +1,6 @@
 package me.hiramchavez.clinicaapi.Model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import me.hiramchavez.clinicaapi.dto.MedicoActualizarRecord;
 import me.hiramchavez.clinicaapi.dto.MedicoRecord;
@@ -17,6 +16,7 @@ public class Medico {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private boolean activo = true;
     private String nombre;
     private String email;
     private String telefono;
@@ -27,6 +27,7 @@ public class Medico {
     private Direccion direccion;
 
     public Medico(MedicoRecord medico) {
+        this.activo = true;
         this.nombre = medico.nombre();
         this.email = medico.email();
         this.telefono = medico.telefono();
@@ -44,5 +45,9 @@ public class Medico {
 
         if (medicoActualizarRecord.direccion() != null)
             this.direccion = direccion.actualizarDatos(medicoActualizarRecord.direccion());
+    }
+
+    public void desactivar() {
+        this.activo = false;
     }
 }
