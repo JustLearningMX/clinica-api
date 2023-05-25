@@ -1,7 +1,10 @@
 package me.hiramchavez.clinicaapi.controller;
 
 import jakarta.validation.Valid;
+import me.hiramchavez.clinicaapi.Model.Usuario;
 import me.hiramchavez.clinicaapi.dto.DatosAutenticacionUsuarioRecord;
+import me.hiramchavez.clinicaapi.dto.DatosJwtTokenRecord;
+import me.hiramchavez.clinicaapi.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,20 +20,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class AutenticacionController {
 
     private final AuthenticationManager authenticationManager;
+    private TokenService tokenService;
 
     @Autowired
-    public AutenticacionController(AuthenticationManager authenticationManager) {
+    public AutenticacionController(
+      AuthenticationManager authenticationManager,
+        TokenService tokenService
+    ) {
         this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
     }
 
     @PostMapping
     public ResponseEntity autenticarUsuario(@RequestBody @Valid DatosAutenticacionUsuarioRecord datosAutenticacionUsuarioRecord) {
-        Authentication token = new UsernamePasswordAuthenticationToken(
+        Authentication authToken = new UsernamePasswordAuthenticationToken(
           datosAutenticacionUsuarioRecord.login(),
           datosAutenticacionUsuarioRecord.clave()
         );
 
-        authenticationManager.authenticate(token);
-        return ResponseEntity.ok().build();
+        var usuarioAutenticado = authenticationManager.authenticate(authToken);
+        var JWTtoken = tokenService.generarToken((Usuario) usuarioAutenticado.getPrincipal());
+        return ResponseEntity.ok(new DatosJwtTokenRecord(JWTtoken));
     }
 }
