@@ -19,4 +19,10 @@ public class TratadorDeErrores {
         var errores = e.getFieldErrors().stream().map(DatosErrorValidacion::new).toList();
         return ResponseEntity.badRequest().body(errores);
     }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity nullPointerException(NullPointerException e) {
+        //var errores = e.getFieldErrors().stream().map(DatosErrorValidacion::new).toList();
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
 }
